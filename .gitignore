@@ -1,0 +1,34 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# Data files (Do not commit large raw files to git)
+data/raw/*.csv
+data/raw/*.zip
+data/processed/*.parquet
+data/processed/*.crc
+*.parquet
+*.parquet/
+
+# Credentials & secrets
+.env
+*.token
+kaggle.json
+
+# Spark & Hadoop local files
+tools/
+*.db
+metastore_db/
+derby.log
+
+# Logs & temp
+*.log
+.pytest_cache/
+.streamlit/
