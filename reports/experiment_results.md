@@ -14,8 +14,13 @@
 - **Java Runtime:** Microsoft Build of OpenJDK 17.0.20.1 LTS (`C:\Program Files\Microsoft\jdk-17.0.20.101-hotspot`).
 - **Apache Spark / PySpark:** 4.2.0 (Chế độ Local Cluster `local[4]`, bộ nhớ Driver: 4GB).
 - **Hadoop Native Binaries:** Hadoop 3.3.6 (`winutils.exe` + `hadoop.dll`).
-- **Apache Cassandra:** Cassandra Driver 3.30.1 / Single Node Port 9042 với cơ chế Persistent CQL Storage Mirror.
-- **Streamlit:** 1.65.0.
+- **Apache Cassandra Multi-Node Cluster (2 Máy Phân Tán Thật):**
+  - **Node 1 (Seed Coordinator):** `192.168.1.175:9042` (256 Virtual Tokens, Sở hữu: 50.0% dữ liệu)
+  - **Node 2 (Peer Worker Node):** `192.168.1.23:9042` (256 Virtual Tokens, Sở hữu: 50.0% dữ liệu)
+  - **Giao thức:** TCP Gossip Heartbeat & Distributed RPC Storage qua mạng LAN Wi-Fi (Độ trễ ping: ~2ms)
+  - **Cơ chế băm phân tán:** Murmur3Partitioner / Consistent Hashing Token Ring
+  - **Công cụ quản trị cụm:** `python scripts/nodetool.py status`
+- **Streamlit Dashboard:** 1.65.0 kết hợp Cloudflare Tunnel trực tuyến.
 - **Kaggle CLI:** 2.2.4.
 
 ---
