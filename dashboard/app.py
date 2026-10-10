@@ -325,9 +325,35 @@ if selected_page == "1. Tổng quan hệ thống":
             )
             st.plotly_chart(fig_pie, use_container_width=True)
 
-# =========================================================================
-# TRANG 2: PHÂN TÍCH THỐNG KÊ TRẬN ĐẤU
-# =========================================================================
+    # Khối Bản Đồ Cụm Phân Tán Đa Nút (Multi-Node Cluster Topology)
+    st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
+    st.markdown("""
+    <div class="content-box">
+        <div class="content-box-title">Kiến Trúc Cụm Lưu Trữ Phân Tán Đa Máy (Apache Cassandra Multi-Node Cluster)</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    cluster_nodes = client.get_cluster_nodes()
+    if cluster_nodes:
+        node_display = []
+        for n in cluster_nodes:
+            is_up = (n.get("status") == "UP")
+            status_text = "Hoạt động (UP)" if is_up else "Mất kết nối (DOWN)"
+            role_desc = "Máy 1 - Seed Coordinator" if n.get("role") == "SEED" else "Máy 2 - Peer Worker Node"
+            load_kb = round(n.get("load_bytes", 0) / 1024.0, 1)
+            node_display.append({
+                "Địa chỉ IP": f"{n.get('ip')}:{n.get('port', 9042)}",
+                "Phân loại máy": role_desc,
+                "Trạng thái": status_text,
+                "Virtual Tokens": n.get("tokens", 256),
+                "Phân tán Sharding": "50.0%",
+                "Dung lượng trên đĩa": f"{load_kb} KB",
+                "Rack / Datacenter": f"{n.get('rack', 'rack1')} / {n.get('datacenter', 'dc1')}"
+            })
+        st.dataframe(pd.DataFrame(node_display), use_container_width=True, hide_index=True)
+        st.caption("Cụm phân tán sử dụng thuật toán băm Murmur3Partitioner, tự động phân phối dữ liệu đều giữa Máy 1 (192.168.1.175) và Máy 2 (192.168.1.23).")
+    else:
+        st.info("Đang khởi tạo danh bạ cụm phân tán...")
 elif selected_page == "2. Phân tích thống kê trận đấu":
     st.markdown("""
     <div class="header-box">
