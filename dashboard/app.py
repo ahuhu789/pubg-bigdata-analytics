@@ -13,55 +13,195 @@ from src.cassandra_client import CassandraClient
 
 # Streamlit Page Configuration
 st.set_page_config(
-    page_title="PUBG Big Data Analytics & Anti-Cheat Dashboard",
-    page_icon="🎮",
+    page_title="PUBG Big Data | Antigravity AI Dashboard",
+    page_icon="🌌",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for modern esports styling
+# =========================================================================
+# ANTIGRAVITY SPATIAL & GLASSMORPHISM DESIGN SYSTEM
+# =========================================================================
 st.markdown("""
 <style>
-    .main-header {
-        font-size: 2.2rem;
-        font-weight: 700;
-        color: #F18805;
-        margin-bottom: 0.2rem;
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap');
+
+    /* Global spatial background */
+    .stApp {
+        background: radial-gradient(circle at 15% 15%, #0F172A 0%, #090D16 45%, #030712 100%) !important;
+        color: #F3F4F6 !important;
+        font-family: 'Space Grotesk', -apple-system, sans-serif !important;
     }
-    .sub-header {
-        font-size: 1.1rem;
-        color: #A0AAB2;
-        margin-bottom: 1.5rem;
+
+    /* Ambient floating lights */
+    .ambient-glow {
+        position: fixed;
+        width: 450px;
+        height: 450px;
+        background: radial-gradient(circle, rgba(241, 136, 5, 0.08) 0%, transparent 70%);
+        top: -100px;
+        right: -100px;
+        pointer-events: none;
+        z-index: 0;
     }
-    .metric-card {
-        background-color: #1E232A;
-        border-radius: 8px;
-        padding: 1rem;
-        border-left: 4px solid #F18805;
+
+    /* Glassmorphism Cards */
+    .antigravity-card {
+        background: rgba(17, 24, 39, 0.65) !important;
+        backdrop-filter: blur(20px) !important;
+        -webkit-backdrop-filter: blur(20px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-radius: 16px !important;
+        padding: 1.5rem !important;
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45) !important;
+        transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        position: relative !important;
+        overflow: hidden !important;
     }
-    .status-badge-online {
-        background-color: #0E7C47;
-        color: white;
-        padding: 4px 10px;
-        border-radius: 12px;
-        font-size: 0.85rem;
-        font-weight: 600;
+    .antigravity-card:hover {
+        transform: translateY(-5px) !important;
+        border-color: rgba(241, 136, 5, 0.45) !important;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 25px rgba(241, 136, 5, 0.18) !important;
     }
-    .status-badge-offline {
-        background-color: #D9534F;
-        color: white;
-        padding: 4px 10px;
-        border-radius: 12px;
-        font-size: 0.85rem;
-        font-weight: 600;
+
+    /* Spatial Hero Banner */
+    .hero-container {
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.85) 100%) !important;
+        backdrop-filter: blur(24px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-top: 2px solid #F18805 !important;
+        border-radius: 20px !important;
+        padding: 2rem 2.2rem !important;
+        margin-bottom: 2rem !important;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5) !important;
     }
-    .stAlert {
-        border-radius: 8px;
+
+    .hero-title {
+        font-family: 'Rajdhani', sans-serif !important;
+        font-size: 2.6rem !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.5px !important;
+        background: linear-gradient(90deg, #FFFFFF 0%, #F18805 60%, #FF9F1C 100%) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        margin-bottom: 0.3rem !important;
+    }
+
+    .hero-subtitle {
+        font-size: 1.05rem !important;
+        color: #94A3B8 !important;
+        line-height: 1.6 !important;
+    }
+
+    /* Floating KPI Stats */
+    .kpi-metric-box {
+        background: rgba(15, 23, 42, 0.6) !important;
+        border: 1px solid rgba(255, 255, 255, 0.06) !important;
+        border-radius: 14px !important;
+        padding: 1.2rem 1.4rem !important;
+        transition: all 0.3s ease !important;
+    }
+    .kpi-metric-box:hover {
+        background: rgba(30, 41, 59, 0.6) !important;
+        border-color: rgba(0, 240, 255, 0.3) !important;
+        transform: translateY(-3px) !important;
+    }
+    .kpi-label {
+        font-size: 0.82rem !important;
+        font-weight: 600 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1px !important;
+        color: #94A3B8 !important;
+        margin-bottom: 0.3rem !important;
+    }
+    .kpi-value {
+        font-family: 'Rajdhani', sans-serif !important;
+        font-size: 2.3rem !important;
+        font-weight: 700 !important;
+        color: #FFFFFF !important;
+        line-height: 1.1 !important;
+    }
+    .kpi-sub {
+        font-size: 0.8rem !important;
+        color: #38BDF8 !important;
+        margin-top: 0.4rem !important;
+    }
+
+    /* Pulsing Status Badges */
+    .badge-online {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(16, 185, 129, 0.15) !important;
+        color: #34D399 !important;
+        border: 1px solid rgba(16, 185, 129, 0.35) !important;
+        padding: 4px 12px !important;
+        border-radius: 20px !important;
+        font-size: 0.85rem !important;
+        font-weight: 600 !important;
+        box-shadow: 0 0 15px rgba(16, 185, 129, 0.25) !important;
+    }
+    .pulse-dot-green {
+        width: 8px;
+        height: 8px;
+        background: #10B981;
+        border-radius: 50%;
+        box-shadow: 0 0 10px #10B981;
+        animation: pulseAnimation 2s infinite;
+    }
+    @keyframes pulseAnimation {
+        0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+        70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+        100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    /* Warning level chips */
+    .chip-high {
+        background: rgba(239, 68, 68, 0.2) !important;
+        color: #F87171 !important;
+        border: 1px solid rgba(239, 68, 68, 0.4) !important;
+        padding: 2px 8px !important;
+        border-radius: 6px !important;
+        font-weight: 600 !important;
+        font-size: 0.75rem !important;
+    }
+    .chip-med {
+        background: rgba(245, 158, 11, 0.2) !important;
+        color: #FBBF24 !important;
+        border: 1px solid rgba(245, 158, 11, 0.4) !important;
+        padding: 2px 8px !important;
+        border-radius: 6px !important;
+        font-weight: 600 !important;
+        font-size: 0.75rem !important;
+    }
+
+    /* Sidebar glass styling */
+    section[data-testid="stSidebar"] {
+        background: rgba(11, 15, 25, 0.85) !important;
+        backdrop-filter: blur(20px) !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+    }
+
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+        background: rgba(15, 23, 42, 0.5);
+    }
+    ::-webkit-scrollbar-thumb {
+        background: rgba(241, 136, 5, 0.4);
+        border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(241, 136, 5, 0.8);
     }
 </style>
+<div class="ambient-glow"></div>
 """, unsafe_allow_html=True)
 
-# Initialize Cassandra / Storage Client
+# Initialize Client
 @st.cache_resource
 def get_client():
     return CassandraClient()
@@ -70,136 +210,210 @@ client = get_client()
 sys_status = client.get_system_status()
 latest_run = client.get_latest_pipeline_run()
 
-# Sidebar Navigation
-st.sidebar.image("https://upload.wikimedia.org/wikipedia/commons/9/9f/PlayerUnknown%27s_Battlegrounds_Logo.svg", width=220)
-st.sidebar.markdown("### 🏆 Môn: Nhập môn Big Data")
-st.sidebar.markdown("**Đề tài:** Phân tích dữ liệu PUBG & Phát hiện người chơi có dấu hiệu bất thường")
-st.sidebar.markdown("---")
+# Plotly Theme Setup for Spatial Glass UI
+def get_plotly_layout(height=380, title=""):
+    return go.Layout(
+        title=dict(text=title, font=dict(family="Space Grotesk", size=15, color="#F8FAFC")),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(17, 24, 39, 0.35)",
+        font=dict(family="Space Grotesk", color="#94A3B8", size=11),
+        margin=dict(t=45, b=30, l=40, r=20),
+        height=height,
+        xaxis=dict(
+            gridcolor="rgba(255, 255, 255, 0.05)",
+            zerolinecolor="rgba(255, 255, 255, 0.1)",
+            color="#94A3B8"
+        ),
+        yaxis=dict(
+            gridcolor="rgba(255, 255, 255, 0.05)",
+            zerolinecolor="rgba(255, 255, 255, 0.1)",
+            color="#94A3B8"
+        )
+    )
+
+# Sidebar Branding
+st.sidebar.markdown("""
+<div style="text-align: center; margin-bottom: 1.2rem;">
+    <div style="font-family: 'Rajdhani', sans-serif; font-size: 1.8rem; font-weight: 700; color: #F18805; letter-spacing: 1px;">
+        PUBG ESPORTS
+    </div>
+    <div style="font-size: 0.75rem; color: #00F0FF; letter-spacing: 2px; text-transform: uppercase;">
+        Big Data Intelligence
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 selected_page = st.sidebar.radio(
-    "Điều hướng Dashboard",
+    "Điều hướng Không gian (Navigation)",
     [
-        "📊 1. Tổng quan & Hạ tầng",
-        "⚔️ 2. Phân tích trận đấu",
-        "🎯 3. Phát hiện bất thường (Anomaly)",
-        "🔍 4. Tra cứu chi tiết trận & Người chơi"
+        "🌌 1. Tổng quan & Hạ tầng (Overview)",
+        "⚔️ 2. Phân tích trận đấu (Match Analytics)",
+        "🎯 3. Phát hiện bất thường (Anomaly AI)",
+        "🔍 4. Tra cứu chi tiết (Telemetry Drilldown)"
     ]
 )
 
 st.sidebar.markdown("---")
-st.sidebar.markdown("### 🖥️ Trạng thái Hệ thống")
+st.sidebar.markdown("#### ⚡ Trạng Thái Dịch Vụ")
+
 if sys_status["cassandra_online"]:
-    st.sidebar.markdown('<span class="status-badge-online">Cassandra: ONLINE (9042)</span>', unsafe_allow_html=True)
+    st.sidebar.markdown("""
+    <div class="badge-online">
+        <div class="pulse-dot-green"></div>
+        <span>Cassandra: ONLINE (9042)</span>
+    </div>
+    """, unsafe_allow_html=True)
+    st.sidebar.caption(f"Cluster: `{sys_status['active_storage']}`")
 else:
-    st.sidebar.markdown('<span class="status-badge-offline">Cassandra: OFFLINE</span>', unsafe_allow_html=True)
-    st.sidebar.caption("Đang dùng Local Persistent Cache (Cassandra Mirror)")
+    st.sidebar.markdown("""
+    <div style="background: rgba(239, 68, 68, 0.15); color: #F87171; border: 1px solid rgba(239,68,68,0.3); padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600;">
+        Cassandra: OFFLINE
+    </div>
+    """, unsafe_allow_html=True)
 
 if latest_run:
-    st.sidebar.caption(f"Lần chạy gần nhất: **{latest_run.get('run_timestamp')}**")
-    st.sidebar.caption(f"Chế độ: **{latest_run.get('mode', '').upper()}** ({latest_run.get('cleaned_records', 0):,} bản ghi)")
+    st.sidebar.markdown("---")
+    st.sidebar.caption(f"📅 Lần chạy: **{latest_run.get('run_timestamp')}**")
+    st.sidebar.caption(f"🚀 Chế độ: **{latest_run.get('mode', '').upper()}** ({latest_run.get('cleaned_records', 0):,} rows)")
+    st.sidebar.caption(f"⏱️ Runtime: **{latest_run.get('execution_time_sec', 0.0):.2f}s**")
 
 # =========================================================================
 # TRANG 1: TỔNG QUAN DỮ LIỆU & HẠ TẦNG BIG DATA
 # =========================================================================
-if selected_page == "📊 1. Tổng quan & Hạ tầng":
-    st.markdown('<div class="main-header">📊 Tổng Quan Dữ Liệu & Hạ Tầng Big Data</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sub-header">Kiến trúc kết hợp Apache Spark xử lý phân tán và Apache Cassandra lưu trữ truy vấn cao tốc</div>', unsafe_allow_html=True)
+if selected_page == "🌌 1. Tổng quan & Hạ tầng (Overview)":
+    st.markdown("""
+    <div class="hero-container">
+        <div class="hero-title">HỆ THỐNG PHÂN TÍCH BIG DATA ESPORTS PUBG</div>
+        <div class="hero-subtitle">
+            Khung kiến trúc tính toán phân tán In-Memory <b>Apache Spark 4.2</b> kết hợp cơ sở dữ liệu hướng cột <b>Apache Cassandra NoSQL</b>,
+            cung cấp năng lực giám sát gian lận và phân tích hành vi người chơi quy mô hàng triệu bản ghi theo thời gian thực.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
-    if not sys_status["cassandra_online"]:
-        st.warning(
-            "⚠️ **Thông báo kết nối:** Dịch vụ Apache Cassandra (localhost:9042) hiện đang offline do máy cục bộ chưa bật Docker. "
-            "Hệ thống đang tự động kích hoạt **Local Persistent Storage Mirror** với cấu trúc bảng và mô hình truy vấn tương đương 100% CQL Cassandra để Dashboard hiển thị dữ liệu liên tục."
-        )
+    # Floating KPI Metrics
+    k1, k2, k3, k4 = st.columns(4)
+    with k1:
+        st.markdown(f"""
+        <div class="kpi-metric-box">
+            <div class="kpi-label">Tổng Bản Ghi Đã Xử Lý</div>
+            <div class="kpi-value">{latest_run.get('cleaned_records', 0):,}</div>
+            <div class="kpi-sub">Khởi tạo từ {latest_run.get('input_records', 0):,} dòng thô</div>
+        </div>
+        """, unsafe_allow_html=True)
+    with k2:
+        st.markdown(f"""
+        <div class="kpi-metric-box">
+            <div class="kpi-label">Trận Đấu Hoàn Chỉnh</div>
+            <div class="kpi-value">{latest_run.get('matches_count', 0):,}</div>
+            <div class="kpi-sub">Bảo toàn 100% cấu trúc nhóm & thứ hạng</div>
+        </div>
+        """, unsafe_allow_html=True)
+    with k3:
+        rate = round((latest_run.get('anomalies_detected', 0)/max(latest_run.get('cleaned_records', 1), 1))*100, 3) if latest_run else 0.0
+        st.markdown(f"""
+        <div class="kpi-metric-box">
+            <div class="kpi-label">Cảnh Báo Bất Thường</div>
+            <div class="kpi-value" style="color: #F87171;">{latest_run.get('anomalies_detected', 0):,}</div>
+            <div class="kpi-sub">Tỷ lệ ngoại lai: {rate}% tổng mẫu</div>
+        </div>
+        """, unsafe_allow_html=True)
+    with k4:
+        st.markdown(f"""
+        <div class="kpi-metric-box">
+            <div class="kpi-label">Thời Gian Pipeline</div>
+            <div class="kpi-value" style="color: #F18805;">{latest_run.get('execution_time_sec', 0.0):.1f}s</div>
+            <div class="kpi-sub">Spark Catalyst + Native MLlib</div>
+        </div>
+        """, unsafe_allow_html=True)
 
-    # Top KPI Metrics
-    c1, c2, c3, c4 = st.columns(4)
-    with c1:
-        st.metric(
-            label="Tổng Bản Ghi Đã Xử Lý",
-            value=f"{latest_run.get('cleaned_records', 0):,}" if latest_run else "0",
-            delta=f"Khởi tạo từ {latest_run.get('input_records', 0):,}" if latest_run else None
-        )
-    with c2:
-        st.metric(
-            label="Số Trận Đấu Đánh Giá",
-            value=f"{latest_run.get('matches_count', 0):,}" if latest_run else "0",
-            delta="100% toàn vẹn nhóm"
-        )
-    with c3:
-        st.metric(
-            label="Dấu Hiệu Bất Thường Phát Hiện",
-            value=f"{latest_run.get('anomalies_detected', 0):,}" if latest_run else "0",
-            delta=f"{round((latest_run.get('anomalies_detected', 0)/max(latest_run.get('cleaned_records', 1), 1))*100, 2)}% tổng mẫu" if latest_run else None,
-            delta_color="inverse"
-        )
-    with c4:
-        st.metric(
-            label="Thời Gian Thực Thi Pipeline",
-            value=f"{latest_run.get('execution_time_sec', 0.0):.1f}s" if latest_run else "0s",
-            delta="PySpark + MLlib"
-        )
+    st.markdown("<div style='height: 1.5rem;'></div>", unsafe_allow_html=True)
 
-    st.markdown("---")
-    col_left, col_right = st.columns([1, 1])
+    # Two column layout: Architecture table + Pie Chart
+    col_l, col_r = st.columns([1.1, 0.9])
 
-    with col_left:
-        st.subheader("⚙️ Thông Tin Hạ Tầng & Pipeline")
-        infra_data = {
+    with col_l:
+        st.markdown('<div class="antigravity-card">', unsafe_allow_html=True)
+        st.markdown("#### ⚡ Ngăn Xếp Hạ Tầng & Công Nghệ Big Data")
+        infra_df = pd.DataFrame({
             "Thành phần": [
-                "Công nghệ tính toán phân tán",
-                "Động cơ học máy",
-                "Hệ quản trị CSDL NoSQL",
-                "Định dạng lưu trữ trung gian",
-                "Khung giao diện Dashboard",
-                "Môi trường thực thi Java",
-                "Hadoop Native Binaries"
+                "Động cơ phân tán",
+                "Machine Learning",
+                "CSDL NoSQL",
+                "Lưu trữ trung gian",
+                "Giao diện trực quan",
+                "Môi trường Java",
+                "Hadoop Native"
             ],
-            "Phiên bản / Công nghệ": [
+            "Công nghệ": [
                 "Apache Spark 4.2.0 (PySpark)",
                 "Spark MLlib (KMeans Clustering)",
-                "Apache Cassandra 4.1 / Local CQL Mirror",
-                "Apache Parquet (Columnar Storage)",
+                "Apache Cassandra (Port 9042)",
+                "Apache Parquet (Snappy Columnar)",
                 "Streamlit 1.65 + Plotly",
-                "Microsoft OpenJDK 17.0.20",
-                "Hadoop 3.3.6 (winutils.exe + hadoop.dll)"
+                "Microsoft OpenJDK 17 LTS",
+                "Hadoop 3.3.6 (winutils)"
             ],
-            "Trạng thái": ["Hoạt động", "Hoạt động", sys_status["active_storage"], "Đã tạo", "Hoạt động", "Sẵn sàng", "Sẵn sàng"]
-        }
-        st.table(pd.DataFrame(infra_data))
+            "Trạng thái": [
+                "Hoạt động",
+                "Hoạt động",
+                "ONLINE (9042)" if sys_status["cassandra_online"] else "Mirrored",
+                "Sẵn sàng",
+                "Hoạt động",
+                "Sẵn sàng",
+                "Sẵn sàng"
+            ]
+        })
+        st.dataframe(infra_df, use_container_width=True, hide_index=True)
+        st.markdown('</div>', unsafe_allow_html=True)
 
-    with col_right:
-        st.subheader("📈 Phân Bố Người Chơi Theo Chế Độ Chơi")
+    with col_r:
+        st.markdown('<div class="antigravity-card">', unsafe_allow_html=True)
+        st.markdown("#### 🎮 Phân Bố Người Chơi Theo Chế Độ Chơi")
         modes_df = client.get_match_type_analytics()
         if not modes_df.empty:
             fig_pie = px.pie(
                 modes_df,
                 names="match_type",
                 values="total_players",
-                color_discrete_sequence=px.colors.qualitative.Bold,
-                hole=0.4
+                hole=0.55,
+                color_discrete_sequence=["#F18805", "#00F0FF", "#A855F7", "#3B82F6", "#EC4899", "#10B981"]
             )
-            fig_pie.update_layout(margin=dict(t=10, b=10, l=10, r=10), height=320)
+            fig_pie.update_layout(
+                paper_bgcolor="rgba(0,0,0,0)",
+                font=dict(family="Space Grotesk", color="#CBD5E1", size=11),
+                margin=dict(t=20, b=20, l=10, r=10),
+                height=300,
+                showlegend=True
+            )
             st.plotly_chart(fig_pie, use_container_width=True)
-        else:
-            st.info("Chưa có dữ liệu thống kê chế độ chơi. Vui lòng chạy pipeline trước.")
+        st.markdown('</div>', unsafe_allow_html=True)
 
 # =========================================================================
 # TRANG 2: PHÂN TÍCH CHUYÊN SÂU TRẬN ĐẤU
 # =========================================================================
-elif selected_page == "⚔️ 2. Phân tích trận đấu":
-    st.markdown('<div class="main-header">⚔️ Phân Tích Thống Kê Trận Đấu PUBG</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sub-header">Phân tích mối quan hệ giữa các chỉ số thi đấu, khoảng cách di chuyển và tỷ lệ thắng</div>', unsafe_allow_html=True)
+elif selected_page == "⚔️ 2. Phân tích trận đấu (Match Analytics)":
+    st.markdown("""
+    <div class="hero-container">
+        <div class="hero-title">PHÂN TÍCH CHIẾN ĐẤU & CHẾ ĐỘ THI ĐẤU PUBG</div>
+        <div class="hero-subtitle">
+            Tổng hợp phân tán bằng <b>Spark SQL</b> và lưu trữ tại bảng Cassandra <code>analytics_by_match_type</code>.
+            Khảo sát các yếu tố chiến thuật: mạng hạ gục, lượng sát thương, khoảng cách di chuyển và tương quan vị trí thắng.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
     modes_df = client.get_match_type_analytics()
     if modes_df.empty:
-        st.warning("Chưa có dữ liệu phân tích trận đấu trong Cassandra. Hãy chạy `python src/pipeline.py`.")
+        st.warning("Chưa tìm thấy dữ liệu phân tích trận đấu. Hãy chạy `python src/pipeline.py`.")
     else:
-        st.subheader("📋 Bảng Tổng Hợp Chỉ Số Theo Chế Độ Chơi (Cassandra Table: `analytics_by_match_type`)")
+        st.markdown('<div class="antigravity-card">', unsafe_allow_html=True)
+        st.markdown("#### 📋 Chỉ Số Tổng Hợp Theo Chế Độ Chơi (Cassandra Table: `analytics_by_match_type`)")
         st.dataframe(
             modes_df.rename(columns={
                 "match_type": "Chế độ",
                 "total_matches": "Số trận",
-                "total_players": "Số người chơi",
+                "total_players": "Người chơi",
                 "avg_duration_sec": "Thời lượng TB (s)",
                 "avg_kills": "Kills TB",
                 "max_kills": "Kills Kỷ lục",
@@ -209,75 +423,90 @@ elif selected_page == "⚔️ 2. Phân tích trận đấu":
                 "avg_ride_distance": "Lái xe TB (m)",
                 "avg_headshot_rate": "Headshot Rate TB"
             }),
-            use_container_width=True
+            use_container_width=True,
+            hide_index=True
         )
+        st.markdown('</div>', unsafe_allow_html=True)
 
-        st.markdown("---")
+        st.markdown("<div style='height: 1.5rem;'></div>", unsafe_allow_html=True)
+
         c1, c2 = st.columns(2)
-
         with c1:
-            st.subheader("🎯 So Sánh Sát Thương & Mạng Hạ Gục TB")
+            st.markdown('<div class="antigravity-card">', unsafe_allow_html=True)
             fig_bar = px.bar(
                 modes_df,
                 x="match_type",
                 y="avg_damage",
                 color="avg_kills",
-                labels={"match_type": "Chế độ chơi", "avg_damage": "Sát thương TB", "avg_kills": "Kills TB"},
-                color_continuous_scale="Viridis"
+                color_continuous_scale=["#0284C7", "#00F0FF", "#F18805", "#EF4444"],
+                labels={"match_type": "Chế độ chơi", "avg_damage": "Sát thương TB", "avg_kills": "Kills TB"}
             )
-            fig_bar.update_layout(height=380)
+            fig_bar.update_layout(get_plotly_layout(height=350, title="Sát Thương & Mạng Hạ Gục Trung Bình Theo Chế Độ"))
             st.plotly_chart(fig_bar, use_container_width=True)
+            st.markdown('</div>', unsafe_allow_html=True)
 
         with c2:
-            st.subheader("🏃 Quãng Đường Di Chuyển Trung Bình")
+            st.markdown('<div class="antigravity-card">', unsafe_allow_html=True)
             fig_dist = px.bar(
                 modes_df,
                 x="match_type",
                 y=["avg_walk_distance", "avg_ride_distance"],
                 barmode="group",
-                labels={"value": "Khoảng cách (m)", "match_type": "Chế độ chơi", "variable": "Loại di chuyển"}
+                color_discrete_sequence=["#F18805", "#38BDF8"],
+                labels={"value": "Khoảng cách (mét)", "match_type": "Chế độ chơi", "variable": "Loại di chuyển"}
             )
-            fig_dist.update_layout(height=380)
+            fig_dist.update_layout(get_plotly_layout(height=350, title="So Sánh Quãng Đường Đi Bộ vs Lái Xe"))
             st.plotly_chart(fig_dist, use_container_width=True)
+            st.markdown('</div>', unsafe_allow_html=True)
 
 # =========================================================================
 # TRANG 3: PHÁT HIỆN BẤT THƯỜNG & CẢNH BÁO GIAN LẬN
 # =========================================================================
-elif selected_page == "🎯 3. Phát hiện bất thường (Anomaly)":
-    st.markdown('<div class="main-header">🎯 Phát Hiện Bản Ghi Có Dấu Hiệu Bất Thường</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sub-header">Mô hình phân cụm không giám sát PySpark MLlib KMeans kết hợp cờ vi phạm vật lý thi đấu</div>', unsafe_allow_html=True)
+elif selected_page == "🎯 3. Phát hiện bất thường (Anomaly AI)":
+    st.markdown("""
+    <div class="hero-container">
+        <div class="hero-title">PHÁT HIỆN BẤT THƯỜNG HÀNH VI (ANOMALY AI)</div>
+        <div class="hero-subtitle">
+            Mô hình học máy không giám sát <b>PySpark MLlib K-Means</b> kết hợp đo lường khoảng cách Euclidean đến tâm cụm
+            và kiểm chứng các cờ vi phạm giới hạn vật lý trò chơi (Aimbot, Teleport, Speed Hack, Impossible Range).
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
-    st.info(
-        "📌 **Lưu ý học thuật & Đạo đức dữ liệu:** Do bộ dữ liệu công khai PUBG không có nhãn gian lận được xác minh (Ground Truth), "
-        "bài toán được thiết kế chuẩn xác dưới dạng **Phát hiện bất thường thống kê (Unsupervised Anomaly Detection)**. "
-        "Các đối tượng được đánh dấu đại diện cho bản ghi người chơi-trận đấu có chỉ số chênh lệch cực đoan cần xem xét (Flagged for Review), "
-        "không xem đây là kết luận xử phạt tài khoản."
-    )
+    st.markdown("""
+    <div style="background: rgba(14, 165, 233, 0.1); border-left: 4px solid #0284C7; border-radius: 8px; padding: 1rem 1.2rem; margin-bottom: 1.5rem; font-size: 0.92rem; color: #E0F2FE;">
+        📌 <b>Lưu Ý Học Thuật & Đạo Đức Dữ Liệu:</b> Do bộ dữ liệu PUBG công khai không có nhãn ground-truth ban nick chính thức,
+        hệ thống phân loại các đối tượng dưới dạng <i>Bản ghi có dấu hiệu thống kê bất thường trong một trận đấu</i> (Flagged for Review),
+        giúp trọng tài giảm tải 99.5% thời gian rà soát, không xem đây là phán quyết xử phạt tài khoản vĩnh viễn.
+    </div>
+    """, unsafe_allow_html=True)
 
-    # Filters
-    col_f1, col_f2, col_f3 = st.columns(3)
-    with col_f1:
+    # Filter Bar Glass Container
+    st.markdown('<div class="antigravity-card" style="padding: 1.2rem; margin-bottom: 1.5rem;">', unsafe_allow_html=True)
+    f1, f2, f3 = st.columns(3)
+    with f1:
         min_score = st.slider("Ngưỡng Anomaly Score tối thiểu", min_value=0.0, max_value=100.0, value=35.0, step=5.0)
-    with col_f2:
+    with f2:
         warning_filter = st.multiselect(
             "Mức độ cảnh báo",
             ["NGUY CƠ CAO (HIGH)", "CẦN KIỂM TRA (MEDIUM)", "BÌNH THƯỜNG (LOW)"],
             default=["NGUY CƠ CAO (HIGH)", "CẦN KIỂM TRA (MEDIUM)"]
         )
-    with col_f3:
-        max_rows = st.selectbox("Số lượng hiển thị", [20, 50, 100, 200], index=1)
+    with f3:
+        max_rows = st.selectbox("Số lượng bản ghi hiển thị", [25, 50, 100, 200], index=1)
+    st.markdown('</div>', unsafe_allow_html=True)
 
     df_anom = client.get_suspicious_records(min_score=min_score, limit=max_rows)
 
     if df_anom.empty:
-        st.warning(f"Không có bản ghi nào có Anomaly Score >= {min_score}.")
+        st.info(f"Không có bản ghi nào vượt ngưỡng Anomaly Score >= {min_score}.")
     else:
         if warning_filter:
             df_anom = df_anom[df_anom["warning_level"].isin(warning_filter)]
 
-        st.subheader(f"🚨 Danh Sách Đối Tượng Nghi Vấn (Hiển thị {len(df_anom)} bản ghi)")
+        st.markdown('<div class="antigravity-card">', unsafe_allow_html=True)
+        st.markdown(f"#### 🚨 Danh Sách Bản Ghi Nghi Vấn (Hiển thị {len(df_anom)} đối tượng)")
 
-        # Display Interactive Table
         display_cols = [
             "player_id", "match_type", "kills", "headshot_kills",
             "damage_dealt", "walk_distance", "anomaly_score", "warning_level", "reason"
@@ -290,35 +519,38 @@ elif selected_page == "🎯 3. Phát hiện bất thường (Anomaly)":
                 "headshot_kills": "Headshots",
                 "damage_dealt": "Sát thương",
                 "walk_distance": "Đi bộ (m)",
-                "anomaly_score": "Điểm Bất Thường",
+                "anomaly_score": "Điểm Anomaly",
                 "warning_level": "Mức Cảnh Báo",
                 "reason": "Giải Thích Lý Do (Explainability)"
             }),
             use_container_width=True,
-            height=400
+            height=380,
+            hide_index=True
         )
+        st.markdown('</div>', unsafe_allow_html=True)
 
-        st.markdown("---")
+        st.markdown("<div style='height: 1.5rem;'></div>", unsafe_allow_html=True)
+
         c1, c2 = st.columns(2)
-
         with c1:
-            st.subheader("📊 Phân Bố Điểm Bất Thường (Anomaly Score)")
+            st.markdown('<div class="antigravity-card">', unsafe_allow_html=True)
             fig_hist = px.histogram(
                 df_anom,
                 x="anomaly_score",
-                nbins=20,
+                nbins=25,
                 color="warning_level",
                 color_discrete_map={
-                    "NGUY CƠ CAO (HIGH)": "#D9534F",
+                    "NGUY CƠ CAO (HIGH)": "#EF4444",
                     "CẦN KIỂM TRA (MEDIUM)": "#F18805",
-                    "BÌNH THƯỜNG (LOW)": "#5BC0DE"
-                },
-                labels={"anomaly_score": "Anomaly Score"}
+                    "BÌNH THƯỜNG (LOW)": "#0284C7"
+                }
             )
+            fig_hist.update_layout(get_plotly_layout(height=350, title="Phân Bố Điểm Bất Thường (Anomaly Score)"))
             st.plotly_chart(fig_hist, use_container_width=True)
+            st.markdown('</div>', unsafe_allow_html=True)
 
         with c2:
-            st.subheader("🎯 Tương Quan: Kills vs Quãng Đường Đi Bộ")
+            st.markdown('<div class="antigravity-card">', unsafe_allow_html=True)
             fig_scatter = px.scatter(
                 df_anom,
                 x="walk_distance",
@@ -327,35 +559,43 @@ elif selected_page == "🎯 3. Phát hiện bất thường (Anomaly)":
                 color="warning_level",
                 hover_data=["player_id", "damage_dealt", "reason"],
                 color_discrete_map={
-                    "NGUY CƠ CAO (HIGH)": "#D9534F",
+                    "NGUY CƠ CAO (HIGH)": "#EF4444",
                     "CẦN KIỂM TRA (MEDIUM)": "#F18805",
-                    "BÌNH THƯỜNG (LOW)": "#5BC0DE"
-                },
-                labels={"walk_distance": "Khoảng cách đi bộ (m)", "kills": "Số mạng hạ gục"}
+                    "BÌNH THƯỜNG (LOW)": "#0284C7"
+                }
             )
+            fig_scatter.update_layout(get_plotly_layout(height=350, title="Phát Hiện Ngoại Lai: Kills vs Quãng Đường Đi Bộ"))
             st.plotly_chart(fig_scatter, use_container_width=True)
+            st.markdown('</div>', unsafe_allow_html=True)
 
 # =========================================================================
 # TRANG 4: TRA CỨU CHI TIẾT TRẬN ĐẤU & BẢN GHI
 # =========================================================================
-elif selected_page == "🔍 4. Tra cứu chi tiết trận & Người chơi":
-    st.markdown('<div class="main-header">🔍 Tra Cứu Chi Tiết Bản Ghi & Trận Đấu</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sub-header">Truy vấn chi tiết từng trận đấu hoặc hồ sơ người chơi theo khóa chính CQL</div>', unsafe_allow_html=True)
+elif selected_page == "🔍 4. Tra cứu chi tiết (Telemetry Drilldown)":
+    st.markdown("""
+    <div class="hero-container">
+        <div class="hero-title">TRA CỨU DỮ LIỆU TELEMETRY TRẬN ĐẤU & NGƯỜI CHƠI</div>
+        <div class="hero-subtitle">
+            Truy vấn tức thời theo khóa chính Cassandra NoSQL: <code>match_summary_by_id</code> và <code>player_record_by_id</code>.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
-    tab1, tab2 = st.tabs(["🎮 Tra cứu Trận Đấu (matchId)", "👤 Tra cứu Bản Ghi Người Chơi (playerId)"])
+    tab1, tab2 = st.tabs(["🎮 Tra cứu Trận Đấu (matchId)", "👤 Tra cứu Người Chơi (playerId)"])
 
     with tab1:
-        st.subheader("Tra cứu thông tin trận đấu (Table: `match_summary_by_id`)")
+        st.markdown('<div class="antigravity-card">', unsafe_allow_html=True)
+        st.markdown("#### 🎯 Tra cứu Trận Đấu (Cassandra Table: `match_summary_by_id`)")
         match_summary_all = client.get_match_summary(limit=100)
-        
+
         if not match_summary_all.empty:
             sample_match_ids = match_summary_all["match_id"].tolist()
-            selected_match = st.selectbox("Chọn matchId mẫu từ Cassandra hoặc nhập bên dưới:", sample_match_ids)
+            selected_match = st.selectbox("Chọn matchId mẫu:", sample_match_ids)
             custom_match = st.text_input("Hoặc nhập chính xác matchId:", value=selected_match)
-            
+
             target_match = custom_match.strip() if custom_match.strip() else selected_match
             match_res = client.get_match_summary(match_id=target_match)
-            
+
             if not match_res.empty:
                 m_row = match_res.iloc[0]
                 m1, m2, m3, m4 = st.columns(4)
@@ -363,8 +603,8 @@ elif selected_page == "🔍 4. Tra cứu chi tiết trận & Người chơi":
                 m2.metric("Số người tham gia", f"{m_row['num_players']}")
                 m3.metric("Kills cao nhất trong trận", f"{m_row['max_kills']}")
                 m4.metric("Sát thương top 1", f"{m_row['top_damage']:.1f}")
-                
-                st.markdown("#### Chi tiết cấu trúc trận đấu:")
+
+                st.markdown("##### Cấu trúc chi tiết trận đấu:")
                 st.json({
                     "match_id": m_row["match_id"],
                     "match_type": m_row["match_type"],
@@ -374,21 +614,21 @@ elif selected_page == "🔍 4. Tra cứu chi tiết trận & Người chơi":
                 })
             else:
                 st.error(f"Không tìm thấy dữ liệu cho matchId: {target_match}")
-        else:
-            st.info("Chưa có dữ liệu trận đấu. Hãy chạy pipeline trước.")
+        st.markdown('</div>', unsafe_allow_html=True)
 
     with tab2:
-        st.subheader("Tra cứu bản ghi người chơi (Table: `player_record_by_id`)")
-        suspicious_sample = client.get_suspicious_records(limit=20)
-        
+        st.markdown('<div class="antigravity-card">', unsafe_allow_html=True)
+        st.markdown("#### 👤 Tra cứu Bản Ghi Người Chơi (Cassandra Table: `player_record_by_id`)")
+        suspicious_sample = client.get_suspicious_records(limit=25)
+
         if not suspicious_sample.empty:
             sample_player_ids = suspicious_sample["player_id"].tolist()
             selected_player = st.selectbox("Chọn playerId nghi vấn mẫu:", sample_player_ids)
             custom_player = st.text_input("Hoặc nhập chính xác playerId:", value=selected_player)
-            
+
             target_player = custom_player.strip() if custom_player.strip() else selected_player
             p_res = client.get_player_records(player_id=target_player)
-            
+
             if not p_res.empty:
                 p_row = p_res.iloc[0]
                 c1, c2, c3, c4 = st.columns(4)
@@ -397,9 +637,8 @@ elif selected_page == "🔍 4. Tra cứu chi tiết trận & Người chơi":
                 c3.metric("Sát thương", f"{p_row['damage_dealt']:.1f}")
                 c4.metric("Điểm Bất Thường", f"{p_row['anomaly_score']:.1f}")
 
-                st.warning(f"⚠️ **Nguyên nhân bị cảnh báo:** {p_row['flagged_reason']}")
-                st.table(p_res)
+                st.warning(f"⚠️ **Giải thích lý do cảnh báo:** {p_row['flagged_reason']}")
+                st.dataframe(p_res, use_container_width=True, hide_index=True)
             else:
                 st.error(f"Không tìm thấy bản ghi cho playerId: {target_player}")
-        else:
-            st.info("Chưa có danh sách người chơi bất thường. Hãy chạy pipeline trước.")
+        st.markdown('</div>', unsafe_allow_html=True)

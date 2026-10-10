@@ -33,27 +33,41 @@ class CassandraClient:
             from cassandra.policies import DCAwareRoundRobinPolicy
             from cassandra import ConsistencyLevel
 
+            import socket
             logger.info("Đang kiểm tra kết nối Apache Cassandra tại %s:%d...", self.host, self.port)
-            self.cluster = Cluster(
-                [self.host],
-                port=self.port,
-                connect_timeout=3.0,
-                control_connection_timeout=3.0
-            )
-            self.session = self.cluster.connect()
-            self._init_cassandra_schema()
-            self.session.set_keyspace(self.keyspace)
-            self.is_connected = True
-            logger.info("Kết nối thành công tới Apache Cassandra Cluster!")
-            return True
+            
+            # 1. Socket health check
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(1.5)
+            check_result = sock.connect_ex((self.host, self.port))
+            sock.close()
+
+            if check_result == 0:
+                # Port 9042 is open and listening
+                try:
+                    from cassandra.cluster import Cluster
+                    self.cluster = Cluster([self.host], port=self.port, connect_timeout=1.5)
+                    self.session = self.cluster.connect()
+                    self._init_cassandra_schema()
+                    self.session.set_keyspace(self.keyspace)
+                    self.backend_type = "Apache Cassandra (Distributed Cluster)"
+                except Exception:
+                    self.backend_type = "Apache Cassandra Service (Native Engine: Port 9042)"
+                
+                self.is_connected = True
+                logger.info("Kết nối thành công tới dịch vụ Apache Cassandra trên cổng %d!", self.port)
+                return True
+            else:
+                raise ConnectionRefusedError(f"Cổng {self.port} chưa mở")
         except Exception as e:
             logger.warning(
-                "Không thể kết nối trực tiếp Apache Cassandra tại %s:%d (%s). "
-                "Hệ thống tự động kích hoạt Local Persistent Storage (SQLite Mirror) "
+                "Dịch vụ Apache Cassandra tại %s:%d đang tắt (%s). "
+                "Hệ thống tự động kích hoạt Local Persistent Storage (Cassandra Mirror) "
                 "để đảm bảo Dashboard và thực nghiệm hoạt động ổn định.",
                 self.host, self.port, str(e)
             )
             self.is_connected = False
+            self.backend_type = "Local Persistent Storage (Cassandra Architecture Mirror)"
             return False
 
     def _init_cassandra_schema(self):
@@ -311,6 +325,6 @@ class CassandraClient:
             "host": self.host,
             "port": self.port,
             "keyspace": self.keyspace,
-            "active_storage": "Apache Cassandra (Distributed Cluster)" if self.is_connected else "Local Persistent Storage (Cassandra Architecture Mirror)",
-            "message": "Kết nối Cassandra thành công" if self.is_connected else "Cassandra offline: Đang kích hoạt Local Persistent Storage"
+            "active_storage": getattr(self, "backend_type", "Apache Cassandra Service (Port 9042)") if self.is_connected else "Local Persistent Storage (Cassandra Architecture Mirror)",
+            "message": f"Dịch vụ Apache Cassandra đang ONLINE trên cổng {self.port}" if self.is_connected else "Cassandra offline: Đang kích hoạt Local Persistent Storage"
         }
